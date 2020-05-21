@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.siondream.superjumper.systems.AnimationSystem;
 import com.siondream.superjumper.systems.BackgroundSystem;
 import com.siondream.superjumper.systems.BobSystem;
@@ -40,6 +41,7 @@ import com.siondream.superjumper.systems.SquirrelSystem;
 import com.siondream.superjumper.systems.StateSystem;
 
 public class GameScreen extends ScreenAdapter {
+
 	static final int GAME_READY = 0;
 	static final int GAME_RUNNING = 1;
 	static final int GAME_PAUSED = 2;
@@ -49,6 +51,10 @@ public class GameScreen extends ScreenAdapter {
 	SuperJumper game;
 
 	OrthographicCamera guiCam;
+
+	private Rectangle screenLeftSide;
+	private Rectangle screenRightSide;
+
 	Vector3 touchPoint;
 	World world;
 	CollisionListener collisionListener;
@@ -69,7 +75,9 @@ public class GameScreen extends ScreenAdapter {
 		state = GAME_READY;
 		guiCam = new OrthographicCamera(320, 480);
 		guiCam.position.set(320 / 2, 480 / 2, 0);
-		touchPoint = new Vector3();
+
+		setUpTouchControlAreas();
+
 		collisionListener = new CollisionListener() {
 			@Override
 			public void jump () {
@@ -171,7 +179,11 @@ public class GameScreen extends ScreenAdapter {
 		float accelX = 0.0f;
 		
 		if (appType == ApplicationType.Android || appType == ApplicationType.iOS) {
-			accelX = Gdx.input.getAccelerometerX();
+			if (rightSideTouched(touchPoint.x, touchPoint.y)) {
+				accelX = -2.5f;
+			} else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
+				accelX = 2.5f;
+			}
 		} else {
 			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) accelX = 5f;
 			if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT)) accelX = -5f;
@@ -196,6 +208,22 @@ public class GameScreen extends ScreenAdapter {
 			Settings.addScore(lastScore);
 			Settings.save();
 		}
+	}
+
+	private boolean rightSideTouched(float x, float y) {
+		return screenRightSide.contains(x, y);
+	}
+
+	private boolean leftSideTouched(float x, float y) {
+		return screenLeftSide.contains(x, y);
+	}
+
+	private void setUpTouchControlAreas() {
+		touchPoint = new Vector3();
+		screenLeftSide = new Rectangle(0, 0, guiCam.viewportWidth / 2,
+				guiCam.viewportHeight);
+		screenRightSide = new Rectangle(guiCam.viewportWidth / 2, 0,
+				guiCam.viewportWidth / 2, guiCam.viewportHeight);
 	}
 
 	private void updatePaused () {
