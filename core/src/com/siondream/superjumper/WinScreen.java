@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Align;
 
 public class WinScreen extends ScreenAdapter {
-	SuperJumper game;
-	OrthographicCamera cam;
-	TextureRegion princess;
-	String[] messages = { "Princess: Oh dear!\n What have you done?",
+	private SuperJumper game;
+	private OrthographicCamera cam;
+	private TextureRegion princess;
+	private String[] messages = { "Princess: Oh dear!\n What have you done?",
 						  "Bob: I came to \nrescue you!",
 						  "Princess: you are\n mistaken\nI need no rescueing",
 						  "Bob: So all this \nwork for nothing?",

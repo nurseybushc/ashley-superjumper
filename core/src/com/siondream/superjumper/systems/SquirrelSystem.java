@@ -22,6 +22,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.siondream.superjumper.World;
 import com.siondream.superjumper.components.MovementComponent;
+import com.siondream.superjumper.components.PlatformComponent;
 import com.siondream.superjumper.components.TransformComponent;
 import com.siondream.superjumper.components.SquirrelComponent;
 
@@ -29,6 +30,7 @@ public class SquirrelSystem extends IteratingSystem {
 
 	private ComponentMapper<TransformComponent> tm;
 	private ComponentMapper<MovementComponent> mm;
+	private ComponentMapper<SquirrelComponent> sm;
 	
 	public SquirrelSystem() {
 		super(Family.all(SquirrelComponent.class,
@@ -37,22 +39,29 @@ public class SquirrelSystem extends IteratingSystem {
 		
 		tm = ComponentMapper.getFor(TransformComponent.class);
 		mm = ComponentMapper.getFor(MovementComponent.class);
+		sm = ComponentMapper.getFor(SquirrelComponent.class);
 	}
 
 	@Override
 	public void processEntity(Entity entity, float deltaTime) {
-		TransformComponent t = tm.get(entity);
-		MovementComponent mov = mm.get(entity);
-		
-		if (t.pos.x < SquirrelComponent.WIDTH * 0.5f) {
-			t.pos.x = SquirrelComponent.WIDTH * 0.5f;
-			mov.velocity.x = SquirrelComponent.VELOCITY;
+
+		SquirrelComponent squirrel = sm.get(entity);
+
+		if (squirrel.type == SquirrelComponent.TYPE_MOVING) {
+
+			TransformComponent t = tm.get(entity);
+			MovementComponent mov = mm.get(entity);
+
+			if (t.pos.x < SquirrelComponent.WIDTH * 0.5f) {
+				t.pos.x = SquirrelComponent.WIDTH * 0.5f;
+				mov.velocity.x = SquirrelComponent.VELOCITY;
+			}
+			if (t.pos.x > World.WORLD_WIDTH - SquirrelComponent.WIDTH * 0.5f) {
+				t.pos.x = World.WORLD_WIDTH - SquirrelComponent.WIDTH * 0.5f;
+				mov.velocity.x = -SquirrelComponent.VELOCITY;
+			}
+
+			t.scale.x = mov.velocity.x < 0.0f ? Math.abs(t.scale.x) * -1.0f : Math.abs(t.scale.x);
 		}
-		if (t.pos.x > World.WORLD_WIDTH - SquirrelComponent.WIDTH * 0.5f) {
-			t.pos.x = World.WORLD_WIDTH - SquirrelComponent.WIDTH * 0.5f;
-			mov.velocity.x = -SquirrelComponent.VELOCITY;
-		}
-		
-		t.scale.x = mov.velocity.x < 0.0f ? Math.abs(t.scale.x) * -1.0f : Math.abs(t.scale.x);
 	}
 }

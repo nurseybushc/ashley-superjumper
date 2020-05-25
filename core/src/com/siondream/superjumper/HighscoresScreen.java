@@ -25,12 +25,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class HighscoresScreen extends ScreenAdapter {
-	SuperJumper game;
-	OrthographicCamera guiCam;
-	Rectangle backBounds;
-	Vector3 touchPoint;
-	String[] highScores;
-	float xOffset = 0;
+	private SuperJumper game;
+	private OrthographicCamera guiCam;
+	private Rectangle backBounds;
+	private Vector3 touchPoint;
+	private float xOffset = 0;
 	private GlyphLayout layout = new GlyphLayout();
 
 	public HighscoresScreen (SuperJumper game) {
@@ -40,13 +39,9 @@ public class HighscoresScreen extends ScreenAdapter {
 		guiCam.position.set(320 / 2, 480 / 2, 0);
 		backBounds = new Rectangle(0, 0, 64, 64);
 		touchPoint = new Vector3();
-		highScores = new String[5];
-		for (int i = 0; i < 5; i++) {
-			highScores[i] = i + 1 + ". " + Settings.highscores[i];
-			layout.setText(Assets.font, highScores[i]);
-			xOffset = Math.max(layout.width, xOffset);
-		}
-		xOffset = 160 - xOffset / 2 + layout.width / 2;
+		layout.setText(Assets.font, Settings.getMaxScoreDate() + ":  " + Settings.getMaxScore());
+
+		xOffset = 20;
 	}
 
 	public void update () {
@@ -77,10 +72,9 @@ public class HighscoresScreen extends ScreenAdapter {
 		game.batcher.draw(Assets.highScoresRegion, 10, 360 - 16, 300, 33);
 
 		float y = 230;
-		for (int i = 4; i >= 0; i--) {
-			Assets.font.draw(game.batcher, highScores[i], xOffset, y);
-			y += Assets.font.getLineHeight();
-		}
+		Assets.font.draw(game.batcher, Settings.getMaxScoreDate() + ":  " + Settings.getMaxScore(), xOffset, y);
+		y += Assets.font.getLineHeight();
+		Assets.font.draw(game.batcher, "Highest Level: " + Settings.getMaxLevel(), xOffset, y);
 
 		game.batcher.draw(Assets.arrow, 0, 0, 64, 64);
 		game.batcher.end();

@@ -20,6 +20,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -39,6 +40,8 @@ import com.siondream.superjumper.systems.PlatformSystem;
 import com.siondream.superjumper.systems.RenderingSystem;
 import com.siondream.superjumper.systems.SquirrelSystem;
 import com.siondream.superjumper.systems.StateSystem;
+
+import java.util.Random;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -124,8 +127,9 @@ public class GameScreen extends ScreenAdapter {
 		pauseBounds = new Rectangle(320 - 64, 480 - 64, 64, 64);
 		resumeBounds = new Rectangle(160 - 96, 240, 192, 36);
 		quitBounds = new Rectangle(160 - 96, 240 - 36, 192, 36);
-		lastScore = 0;
-		scoreString = "SCORE: 0";
+
+		lastScore = Settings.getCurrentScore();
+		scoreString = "SCORE: " + lastScore + "\nLEVEL: " + Settings.getCurrentLevel();
 		
 		pauseSystems();
 	}
@@ -180,9 +184,15 @@ public class GameScreen extends ScreenAdapter {
 		
 		if (appType == ApplicationType.Android || appType == ApplicationType.iOS) {
 			if (rightSideTouched(touchPoint.x, touchPoint.y)) {
-				accelX = -2.5f;
+				accelX = -2.5f; //TODO Randomize this
+				//float randomRightAccel = -2.5f * (1f + new Random().nextFloat());
+				//accelX = randomRightAccel;
+				//Gdx.app.debug("GameScreen", "randomRightAccel:" + randomRightAccel);
 			} else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
-				accelX = 2.5f;
+				accelX = 2.5f; //TODO Randomize this
+				//float randomLeftAccel = 2.5f * (1f + new Random().nextFloat());
+				//accelX = randomLeftAccel;
+				//Gdx.app.debug("GameScreen", "randomLeftAccel:" + randomLeftAccel);
 			}
 		} else {
 			if (Gdx.input.isKeyPressed(Keys.DPAD_LEFT)) accelX = 5f;
@@ -193,20 +203,33 @@ public class GameScreen extends ScreenAdapter {
 		
 		if (world.score != lastScore) {
 			lastScore = world.score;
-			scoreString = "SCORE: " + lastScore;
+			scoreString = "SCORE: " + lastScore + "\nLEVEL: "+ world.difficulty;
 		}
 		if (world.state == World.WORLD_STATE_NEXT_LEVEL) {
-			game.setScreen(new WinScreen(game));
+			if(World.ENDING_DIFFICULTY == world.difficulty) {
+				Settings.saveMaxScore(lastScore);
+				Settings.saveCurrentLevel(1);
+				Settings.saveCurrentScore(0);
+				Settings.saveMaxLevel(world.difficulty);
+
+				game.setScreen(new WinScreen(game));
+			} else {
+				Settings.saveCurrentLevel(world.difficulty);
+				Settings.saveCurrentScore(lastScore);
+				game.setScreen(new GameScreen(game));
+			}
 		}
 		if (world.state == World.WORLD_STATE_GAME_OVER) {
 			state = GAME_OVER;
-			if (lastScore >= Settings.highscores[4])
+			if (lastScore >= Settings.getMaxScore())
 				scoreString = "NEW HIGHSCORE: " + lastScore;
 			else
-				scoreString = "SCORE: " + lastScore;
+				scoreString = "SCORE: " + lastScore + "\nLEVEL: "+ world.difficulty;
 			pauseSystems();
-			Settings.addScore(lastScore);
-			Settings.save();
+			Settings.saveCurrentLevel(1);
+			Settings.saveCurrentScore(0);
+			Settings.saveMaxScore(lastScore);
+			Settings.saveMaxLevel(world.difficulty);
 		}
 	}
 
@@ -286,6 +309,7 @@ public class GameScreen extends ScreenAdapter {
 
 	private void presentReady () {
 		game.batcher.draw(Assets.ready, 160 - 192 / 2, 240 - 32 / 2, 192, 32);
+		Assets.font.draw(game.batcher, scoreString, 16, 480 - 20);
 	}
 
 	private void presentRunning () {

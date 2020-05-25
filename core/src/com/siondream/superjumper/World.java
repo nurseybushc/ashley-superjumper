@@ -41,7 +41,8 @@ import com.siondream.superjumper.systems.RenderingSystem;
 
 public class World {
 	public static final float WORLD_WIDTH = 10;
-	public static final float WORLD_HEIGHT = 15 * 20;
+	public static final float STARTING_WORLD_HEIGHT = 15;
+	public static final int ENDING_DIFFICULTY = 20;
 	public static final int WORLD_STATE_RUNNING = 0;
 	public static final int WORLD_STATE_NEXT_LEVEL = 1;
 	public static final int WORLD_STATE_GAME_OVER = 2;
@@ -52,12 +53,21 @@ public class World {
 	public float heightSoFar;
 	public int score;
 	public int state;
-	
+	public int difficulty;
+	public float WORLD_HEIGHT;
+
+
 	private PooledEngine engine;
 
 	public World (PooledEngine engine) {
 		this.engine = engine;
 		this.rand = new Random();
+
+		this.difficulty = Settings.getCurrentLevel();
+		this.rand.setSeed(this.difficulty);
+
+		this.WORLD_HEIGHT = STARTING_WORLD_HEIGHT * difficulty;
+		this.score = Settings.getCurrentScore();
 	}
 	
 	public void create() {
@@ -67,7 +77,6 @@ public class World {
 		generateLevel();
 
 		this.heightSoFar = 0;
-		this.score = 0;
 		this.state = WORLD_STATE_RUNNING;
 	}
 
@@ -80,16 +89,19 @@ public class World {
 
 			createPlatform(type, x, y);
 
-			if (rand.nextFloat() > 0.9f && type != PlatformComponent.TYPE_MOVING) {
+			if (rand.nextFloat() > 0.1f && type != PlatformComponent.TYPE_MOVING) {
 				createSpring(x, y + PlatformComponent.HEIGHT / 2 + SpringComponent.HEIGHT / 2);
 			}
 
-			if (y > WORLD_HEIGHT / 3 && rand.nextFloat() > 0.8f) {
-				createSquirrel(x + rand.nextFloat(), y + SquirrelComponent.HEIGHT + rand.nextFloat() * 2);
+			if (y > WORLD_HEIGHT / 3 && rand.nextFloat() > 0.4f) {
+				type = rand.nextFloat() > 0.8f ? SquirrelComponent.TYPE_MOVING : SquirrelComponent.TYPE_STATIC;
+				createSquirrel(type, x + rand.nextFloat(), y + SquirrelComponent.HEIGHT + rand.nextFloat() * 2);
 			}
 
-			if (rand.nextFloat() > 0.6f) {
-				createCoin(x + MathUtils.random(-0.5f, 0.5f), y + CoinComponent.HEIGHT + rand.nextFloat() * 3);
+			float startingCoinRand = 0.1f;
+			while(rand.nextFloat() > startingCoinRand && startingCoinRand < 0.99f) {
+				createCoin(x + MathUtils.random(-0.5f, 0.5f), y + CoinComponent.HEIGHT);
+				startingCoinRand = startingCoinRand + 0.35f;
 			}
 
 			y += (maxJumpHeight - 0.5f);
@@ -196,7 +208,7 @@ public class World {
 		engine.addEntity(entity);
 	}
 	
-	private void createSquirrel(float x, float y) {
+	private void createSquirrel(int type, float x, float y) {
 		Entity entity = engine.createEntity();
 		
 		AnimationComponent animation = engine.createComponent(AnimationComponent.class);
@@ -207,8 +219,6 @@ public class World {
 		StateComponent state = engine.createComponent(StateComponent.class);
 		TextureComponent texture = engine.createComponent(TextureComponent.class);
 		
-		movement.velocity.x = rand.nextFloat() > 0.5f ? SquirrelComponent.VELOCITY : -SquirrelComponent.VELOCITY;
-		
 		animation.animations.put(SquirrelComponent.STATE_NORMAL, Assets.squirrelFly);
 		
 		bounds.bounds.width = SquirrelComponent.WIDTH;
@@ -217,6 +227,11 @@ public class World {
 		position.pos.set(x, y, 2.0f);
 		
 		state.set(SquirrelComponent.STATE_NORMAL);
+
+		squirrel.type = type;
+		if (type == SquirrelComponent.TYPE_MOVING) {
+			movement.velocity.x = rand.nextFloat() > 0.5f ? SquirrelComponent.VELOCITY : -SquirrelComponent.VELOCITY;
+		}
 		
 		entity.add(animation);
 		entity.add(squirrel);

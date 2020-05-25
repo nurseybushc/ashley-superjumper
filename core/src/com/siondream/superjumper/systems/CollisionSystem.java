@@ -113,6 +113,7 @@ public class CollisionSystem extends EntitySystem {
 						if (bobBounds.bounds.overlaps(platBounds.bounds)) {
 							bobSystem.hitPlatform(bob);
 							listener.jump();
+							world.score += PlatformComponent.SCORE;
 							if (rand.nextFloat() > 0.5f) {
 								platformSystem.pulverize(platform);
 							}
@@ -132,6 +133,7 @@ public class CollisionSystem extends EntitySystem {
 						if (bobBounds.bounds.overlaps(springBounds.bounds)) {
 							bobSystem.hitSpring(bob);
 							listener.highJump();
+							world.score += SpringComponent.SCORE;
 						}
 					} 
 				}
@@ -167,6 +169,7 @@ public class CollisionSystem extends EntitySystem {
 				
 				if (castleBounds.bounds.overlaps(bobBounds.bounds)) {
 					world.state = World.WORLD_STATE_NEXT_LEVEL;
+					world.difficulty++;
 				}
 			}
 		}

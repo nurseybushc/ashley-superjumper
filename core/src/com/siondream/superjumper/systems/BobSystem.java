@@ -20,11 +20,14 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.siondream.superjumper.World;
 import com.siondream.superjumper.components.BobComponent;
 import com.siondream.superjumper.components.MovementComponent;
 import com.siondream.superjumper.components.TransformComponent;
 import com.siondream.superjumper.components.StateComponent;
+
+import java.util.Random;
 
 public class BobSystem extends IteratingSystem {
 	private static final Family family = Family.all(BobComponent.class,
@@ -122,7 +125,10 @@ public class BobSystem extends IteratingSystem {
 		StateComponent state = sm.get(entity);
 		MovementComponent mov = mm.get(entity);
 		
-		mov.velocity.y = BobComponent.JUMP_VELOCITY;
+		mov.velocity.y = BobComponent.JUMP_VELOCITY; //TODO Randomize this
+		//float randPlatformVel = BobComponent.JUMP_VELOCITY * new Random().nextFloat();
+		//mov.velocity.y = randPlatformVel;
+		//Gdx.app.debug("BobSystem", "randPlatformVel:" + randPlatformVel);
 		state.set(BobComponent.STATE_JUMP);
 	}
 
@@ -132,7 +138,10 @@ public class BobSystem extends IteratingSystem {
 		StateComponent state = sm.get(entity);
 		MovementComponent mov = mm.get(entity);
 		
-		mov.velocity.y = BobComponent.JUMP_VELOCITY * 1.5f;
+		mov.velocity.y = BobComponent.JUMP_VELOCITY * 1.5f; //TODO Randomize this
+		//float randSpringVel = BobComponent.JUMP_VELOCITY * (1f + new Random().nextFloat());
+		//mov.velocity.y = randSpringVel;
+		//Gdx.app.debug("BobSystem", "randSpringVel:" + randSpringVel);
 		state.set(BobComponent.STATE_JUMP);
 	}
 }

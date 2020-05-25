@@ -27,6 +27,7 @@ public class PlatformComponent implements Component {
 	public static final int STATE_PULVERIZING = 1;
 	public static final float PULVERIZE_TIME = 0.2f * 4;
 	public static final float VELOCITY = 2;
-	
+	public static final int SCORE = 5;
+
 	public int type = TYPE_STATIC;
 }

@@ -26,13 +26,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class HelpScreen5 extends ScreenAdapter {
-	SuperJumper game;
 
-	OrthographicCamera guiCam;
-	Rectangle nextBounds;
-	Vector3 touchPoint;
-	Texture helpImage;
-	TextureRegion helpRegion;
+	private SuperJumper game;
+	private OrthographicCamera guiCam;
+	private Rectangle nextBounds;
+	private Vector3 touchPoint;
+	private Texture helpImage;
+	private TextureRegion helpRegion;
 
 	public HelpScreen5 (SuperJumper game) {
 		this.game = game;
