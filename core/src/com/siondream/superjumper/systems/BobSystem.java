@@ -21,6 +21,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.siondream.superjumper.Testing;
 import com.siondream.superjumper.World;
 import com.siondream.superjumper.components.BobComponent;
 import com.siondream.superjumper.components.MovementComponent;
@@ -104,7 +105,7 @@ public class BobSystem extends IteratingSystem {
 		
 		bob.heightSoFar = Math.max(t.pos.y, bob.heightSoFar);
 		
-		if (bob.heightSoFar - 7.5f > t.pos.y) {
+		if (bob.heightSoFar - 7.5f > t.pos.y && (!Testing.cantFallAugment)) {
 			world.state = World.WORLD_STATE_GAME_OVER;
 		}
 	}
@@ -114,7 +115,9 @@ public class BobSystem extends IteratingSystem {
 		
 		StateComponent state = sm.get(entity);
 		MovementComponent mov = mm.get(entity);
-		
+
+		if(Testing.invulnerableAugment) return;
+
 		mov.velocity.set(0, 0);
 		state.set(BobComponent.STATE_HIT);
 	}
@@ -125,7 +128,7 @@ public class BobSystem extends IteratingSystem {
 		StateComponent state = sm.get(entity);
 		MovementComponent mov = mm.get(entity);
 		
-		mov.velocity.y = BobComponent.JUMP_VELOCITY; //TODO Randomize this
+		mov.velocity.y = BobComponent.JUMP_VELOCITY * Testing.jumpAugment; //TODO Randomize this
 		//float randPlatformVel = BobComponent.JUMP_VELOCITY * new Random().nextFloat();
 		//mov.velocity.y = randPlatformVel;
 		//Gdx.app.debug("BobSystem", "randPlatformVel:" + randPlatformVel);

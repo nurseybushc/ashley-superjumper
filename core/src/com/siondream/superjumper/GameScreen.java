@@ -32,6 +32,7 @@ import com.siondream.superjumper.systems.BackgroundSystem;
 import com.siondream.superjumper.systems.BobSystem;
 import com.siondream.superjumper.systems.BoundsSystem;
 import com.siondream.superjumper.systems.CameraSystem;
+import com.siondream.superjumper.systems.CoinSystem;
 import com.siondream.superjumper.systems.CollisionSystem;
 import com.siondream.superjumper.systems.CollisionSystem.CollisionListener;
 import com.siondream.superjumper.systems.GravitySystem;
@@ -110,6 +111,7 @@ public class GameScreen extends ScreenAdapter {
 		engine.addSystem(new BobSystem(world));
 		engine.addSystem(new SquirrelSystem());
 		engine.addSystem(new PlatformSystem());
+		engine.addSystem(new CoinSystem());
 		engine.addSystem(new CameraSystem());
 		engine.addSystem(new BackgroundSystem());
 		engine.addSystem(new GravitySystem());
@@ -347,6 +349,7 @@ public class GameScreen extends ScreenAdapter {
 		engine.getSystem(BobSystem.class).setProcessing(false);
 		engine.getSystem(SquirrelSystem.class).setProcessing(false);
 		engine.getSystem(PlatformSystem.class).setProcessing(false);
+		engine.getSystem(CoinSystem.class).setProcessing(false);
 		engine.getSystem(GravitySystem.class).setProcessing(false);
 		engine.getSystem(MovementSystem.class).setProcessing(false);
 		engine.getSystem(BoundsSystem.class).setProcessing(false);
@@ -359,6 +362,7 @@ public class GameScreen extends ScreenAdapter {
 		engine.getSystem(BobSystem.class).setProcessing(true);
 		engine.getSystem(SquirrelSystem.class).setProcessing(true);
 		engine.getSystem(PlatformSystem.class).setProcessing(true);
+		engine.getSystem(CoinSystem.class).setProcessing(true);
 		engine.getSystem(GravitySystem.class).setProcessing(true);
 		engine.getSystem(MovementSystem.class).setProcessing(true);
 		engine.getSystem(BoundsSystem.class).setProcessing(true);

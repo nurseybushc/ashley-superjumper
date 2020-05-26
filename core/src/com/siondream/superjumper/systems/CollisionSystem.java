@@ -24,6 +24,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.math.Rectangle;
+import com.siondream.superjumper.Testing;
 import com.siondream.superjumper.World;
 import com.siondream.superjumper.components.BobComponent;
 import com.siondream.superjumper.components.BoundsComponent;
@@ -86,6 +88,7 @@ public class CollisionSystem extends EntitySystem {
 	public void update(float deltaTime) {
 		BobSystem bobSystem = engine.getSystem(BobSystem.class);
 		PlatformSystem platformSystem = engine.getSystem(PlatformSystem.class);
+		CoinSystem coinSystem = engine.getSystem(CoinSystem.class);
 		
 		for (int i = 0; i < bobs.size(); ++i) {
 			Entity bob = bobs.get(i);
@@ -154,11 +157,19 @@ public class CollisionSystem extends EntitySystem {
 				Entity coin = coins.get(j);
 				
 				BoundsComponent coinBounds = bm.get(coin);
-				
+				StateComponent coinState = sm.get(coin);
+
 				if (coinBounds.bounds.overlaps(bobBounds.bounds)) {
 					engine.removeEntity(coin);
 					listener.coin();
 					world.score += CoinComponent.SCORE;
+				}
+
+				if(Testing.gatherCoinAugment) {
+					Rectangle bobBoundsRect = new Rectangle(bobBounds.bounds.x, bobBounds.bounds.y, bobBounds.bounds.width * Testing.gatherCoinStrengthAugment, bobBounds.bounds.height * Testing.gatherCoinStrengthAugment);
+					if (coinBounds.bounds.overlaps(bobBoundsRect) || coinState.get() == CoinComponent.STATE_MOVE_TO_BOB) {
+						coinSystem.moveToBob(coin, bobBoundsRect);
+					}
 				}
 			}
 			

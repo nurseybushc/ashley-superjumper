@@ -24,4 +24,5 @@ public class CoinComponent implements Component {
 	public static final int SCORE = 20;
 	
 	public static final int STATE_NORMAL = 1;
+	public static final int STATE_MOVE_TO_BOB = 2;
 }

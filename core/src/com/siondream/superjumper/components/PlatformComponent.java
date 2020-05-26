@@ -17,6 +17,7 @@
 package com.siondream.superjumper.components;
 
 import com.badlogic.ashley.core.Component;
+import com.siondream.superjumper.Testing;
 
 public class PlatformComponent implements Component {
 	public static final float WIDTH = 2;
@@ -26,7 +27,7 @@ public class PlatformComponent implements Component {
 	public static final int STATE_NORMAL = 0;
 	public static final int STATE_PULVERIZING = 1;
 	public static final float PULVERIZE_TIME = 0.2f * 4;
-	public static final float VELOCITY = 2;
+	public static final float VELOCITY = 2 * Testing.speedAugment;
 	public static final int SCORE = 5;
 
 	public int type = TYPE_STATIC;

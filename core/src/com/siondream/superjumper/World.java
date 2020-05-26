@@ -64,7 +64,7 @@ public class World {
 		this.rand = new Random();
 
 		this.difficulty = Settings.getCurrentLevel();
-		this.rand.setSeed(this.difficulty);
+		this.rand.setSeed(this.difficulty*Testing.seedAugment);
 
 		this.WORLD_HEIGHT = STARTING_WORLD_HEIGHT * difficulty;
 		this.score = Settings.getCurrentScore();
@@ -171,7 +171,7 @@ public class World {
 		
 		platform.type = type;
 		if (type == PlatformComponent.TYPE_MOVING) {
-			movement.velocity.x = rand.nextBoolean() ? PlatformComponent.VELOCITY : -PlatformComponent.VELOCITY;
+			movement.velocity.x = (PlatformComponent.VELOCITY) * (rand.nextBoolean() ? 1 : -1);
 		}
 		
 		entity.add(animation);
@@ -230,7 +230,7 @@ public class World {
 
 		squirrel.type = type;
 		if (type == SquirrelComponent.TYPE_MOVING) {
-			movement.velocity.x = rand.nextFloat() > 0.5f ? SquirrelComponent.VELOCITY : -SquirrelComponent.VELOCITY;
+			movement.velocity.x = (SquirrelComponent.VELOCITY) * (rand.nextFloat() > 0.5f ? 1 : -1);
 		}
 		
 		entity.add(animation);
